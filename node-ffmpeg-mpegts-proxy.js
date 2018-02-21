@@ -138,6 +138,8 @@ var server = http.createServer(function (request, response) {
 			if (error || response.statusCode != 200)
 			{
 				winston.error('could not retrieve wmsAuthSign token');
+				winston.error('status code: ' + response.statusCode);
+				winston.error(error);
 			}
 			else {
 				results = body.match(/wmsAuthSign=(.*)"/);
