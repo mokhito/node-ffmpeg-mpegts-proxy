@@ -122,7 +122,7 @@ var server = http.createServer(function (request, response) {
 	if (source.wmsAuthSign)
 	{
 		winston.debug("Fetching wmsAuthSign...");
-		var options = {
+		var reqOptions = {
 			url: source.wmsAuthSignPage,
 			headers: {
 				'Accept': 'text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8',
@@ -134,7 +134,7 @@ var server = http.createServer(function (request, response) {
 				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
 			}
 		};
-		req(options, function (error, response, body) {
+		req(reqOptions, function (error, response, body) {
 			if (error || response.statusCode != 200)
 			{
 				winston.error('could not retrieve wmsAuthSign token');
