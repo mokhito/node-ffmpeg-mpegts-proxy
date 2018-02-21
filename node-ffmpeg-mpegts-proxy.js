@@ -121,7 +121,8 @@ var server = http.createServer(function (request, response) {
 	// Fetch wmsAuthSign
 	if (source.wmsAuthSign)
 	{
-		winston.debug("Fetching wmsAuthSign...");
+		winston.debug('Fetching wmsAuthSign...');
+		winston.debug('URL: ' + source.wmsAuthSignPage);
 		var reqOptions = {
 			url: source.wmsAuthSignPage,
 			headers: {
