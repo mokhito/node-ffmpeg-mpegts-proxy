@@ -135,10 +135,12 @@ var server = http.createServer(function (request, response) {
 			}
 		};
 		req(reqOptions, function (error, response, body) {
-			if (error || response.statusCode != 200)
+			if (error || response == undefined || body == undefined || response.statusCode != 200)
 			{
 				winston.error('could not retrieve wmsAuthSign token');
-				winston.error('status code: ' + response.statusCode);
+				if (response != undefined) {
+					winston.error('status code: ' + response.statusCode);
+				}
 				winston.error(error);
 			}
 			else {
