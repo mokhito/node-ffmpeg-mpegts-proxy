@@ -126,12 +126,12 @@ var server = http.createServer(function (request, response) {
 		var reqOptions = {
 			url: source.wmsAuthSignPage,
 			headers: {
-				'Accept': 'text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8',
+				'Accept': 'text/html',
 				'Accept-Encoding': 'gzip, deflate',
-				'Accept-Language': 'en-US,en;q=0.5',
+				'Accept-Language': 'en-US',
 				'Cache-Control': 'max-age=0',
 				'Connection': 'keep-alive',
-				'Host': 'www.aljadeed.tv',
+				'Host': 'live.aljadeed.tv',
 				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
 			}
 		};
