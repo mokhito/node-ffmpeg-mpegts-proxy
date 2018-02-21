@@ -11,6 +11,7 @@ var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
 var commandExists = require('command-exists');
+var request = require('request');
 
 /*
  * Define some global constants
@@ -115,6 +116,35 @@ var server = http.createServer(function (request, response) {
 	{
 		winston.debug("Executing pre-script %s", source.prescript);
 		runPrePostScript(source.prescript, [source.source, source.url, source.provider, source.name]);
+	}
+
+	// Fetch wmsAuthSign
+	if (source.wmsAuthSign)
+	{
+		winston.debug("Fetching wmsAuthSign...");
+		var options = {
+			url: source.wmsAuthSignPage,
+			headers: {
+				'Accept': 'text/html,application/xhtml+xm…plication/xml;q=0.9,*/*;q=0.8',
+				'Accept-Encoding': 'gzip, deflate',
+				'Accept-Language': 'en-US,en;q=0.5',
+				'Cache-Control': 'max-age=0',
+				'Connection': 'keep-alive',
+				'Host': 'www.aljadeed.tv',
+				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
+			}
+		};
+		request(options, function (error, response, body) {
+			if (error || response.statusCode != 200)
+			{
+				winston.error('could not retrieve wmsAuthSign token');
+			}
+			else {
+				results = body.match(/wmsAuthSign=(.*)"/);
+				winston.debug("Found wmsAuthSign: " + results[1]);
+				source.source = source.source + "?wmsAuthSign=" + results[1];
+			}
+		});
 	}
 
 	// Tell the client we're sending MPEG-TS data
