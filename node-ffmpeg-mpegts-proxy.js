@@ -118,6 +118,8 @@ var server = http.createServer(function (request, response) {
 		runPrePostScript(source.prescript, [source.source, source.url, source.provider, source.name]);
 	}
 
+	var avconvOptions;
+
 	// Fetch wmsAuthSign
 	if (source.wmsAuthSign)
 	{
@@ -148,6 +150,8 @@ var server = http.createServer(function (request, response) {
 				results = body.match(/wmsAuthSign=(.*)"/);
 				winston.debug("Found wmsAuthSign: " + results[1]);
 				source.source = source.source + "?wmsAuthSign=" + results[1];
+				// Refresh options for the child process
+				avconvOptions = options.getAvconvOptions(source);
 			}
 		});
 	}
@@ -158,7 +162,7 @@ var server = http.createServer(function (request, response) {
 	});
 
 	// Define options for the child process
-	var avconvOptions = options.getAvconvOptions(source);
+	avconvOptions = options.getAvconvOptions(source);
 	winston.silly("Options passed to avconv: " + avconvOptions);
 	
 	// Indicates whether avconv should be restarted on failure
