@@ -11,7 +11,7 @@ var avconv = require('./libs/avconv/avconv');
 var sources = require('./libs/sources');
 var options = require('./libs/options');
 var commandExists = require('command-exists');
-var request = require('request');
+var req = require('request');
 
 /*
  * Define some global constants
@@ -134,7 +134,7 @@ var server = http.createServer(function (request, response) {
 				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
 			}
 		};
-		request(options, function (error, response, body) {
+		req(options, function (error, response, body) {
 			if (error || response.statusCode != 200)
 			{
 				winston.error('could not retrieve wmsAuthSign token');
