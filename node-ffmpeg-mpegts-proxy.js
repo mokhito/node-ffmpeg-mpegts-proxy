@@ -120,42 +120,6 @@ var server = http.createServer(function (request, response) {
 
 	var avconvOptions;
 
-	// Fetch wmsAuthSign
-	if (source.wmsAuthSign)
-	{
-		winston.debug('Fetching wmsAuthSign...');
-		winston.debug('URL: ' + source.wmsAuthSignPage);
-		var reqOptions = {
-			url: source.wmsAuthSignPage,
-			headers: {
-				'Accept': 'text/html',
-				'Accept-Encoding': 'gzip, deflate',
-				'Accept-Language': 'en-US',
-				'Cache-Control': 'max-age=0',
-				'Connection': 'keep-alive',
-				'Host': 'live.aljadeed.tv',
-				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
-			}
-		};
-		req(reqOptions, function (error, response, body) {
-			if (error || response == undefined || body == undefined || response.statusCode != 200)
-			{
-				winston.error('could not retrieve wmsAuthSign token');
-				if (response != undefined) {
-					winston.error('status code: ' + response.statusCode);
-				}
-				winston.error(error);
-			}
-			else {
-				results = body.match(/wmsAuthSign=(.*)"/);
-				winston.debug("Found wmsAuthSign: " + results[1]);
-				source.source = source.source + "?wmsAuthSign=" + results[1];
-				// Refresh options for the child process
-				avconvOptions = options.getAvconvOptions(source);
-			}
-		});
-	}
-
 	// Tell the client we're sending MPEG-TS data
 	response.writeHead(200, {
 		'Content-Type': 'video/mp2t'
@@ -237,8 +201,50 @@ var server = http.createServer(function (request, response) {
 		});
 	};
 	
-	// Start serving data
-	streamingLoop();
+	// Fetch wmsAuthSign
+	if (source.wmsAuthSign)
+	{
+		winston.debug('Fetching wmsAuthSign...');
+		winston.debug('URL: ' + source.wmsAuthSignPage);
+		var reqOptions = {
+			url: source.wmsAuthSignPage,
+			headers: {
+				'Accept': 'text/html',
+				'Accept-Encoding': 'gzip, deflate',
+				'Accept-Language': 'en-US',
+				'Cache-Control': 'max-age=0',
+				'Connection': 'keep-alive',
+				'Host': 'live.aljadeed.tv',
+				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:58.0) Gecko/20100101 Firefox/58.0'
+			}
+		};
+		req(reqOptions, function (error, response, body) {
+			if (error || response == undefined || body == undefined || response.statusCode != 200)
+			{
+				winston.error('could not retrieve wmsAuthSign token');
+				if (response != undefined) {
+					winston.error('status code: ' + response.statusCode);
+				}
+				winston.error(error);
+			}
+			else {
+				results = body.match(/wmsAuthSign=(.*)"/);
+				winston.debug("Found wmsAuthSign: " + results[1]);
+				source.source = source.source + "?wmsAuthSign=" + results[1];
+
+				// Refresh options for the child process
+				avconvOptions = options.getAvconvOptions(source);
+
+				// Start serving data
+				streamingLoop();
+			}
+		});
+	}
+	else
+	{
+		// Start serving data
+		streamingLoop();
+	}
 	
 	// Kill avconv when client closes the connection
 	request.on('close', function () {
